@@ -12443,58 +12443,58 @@ window = (typeof window != 'undefined' && window.Math == Math)
 
 $.fn.range = function(parameters) {
 
-	var
-		$allModules    = $(this),
+  var
+    $allModules    = $(this),
 
     moduleSelector = $allModules.selector || '',
 
     time           = new Date().getTime(),
     performance    = [],
 
-		query          = arguments[0],
+    query          = arguments[0],
     methodInvoked  = (typeof query == 'string'),
     queryArguments = [].slice.call(arguments, 1),
 
     returnedValue
-	;
+  ;
 
   $allModules
     .each(function() {
 
-			var
-				settings          = ( $.isPlainObject(parameters) )
-					? $.extend(true, {}, $.fn.range.settings, parameters)
-					: $.extend({}, $.fn.range.settings),
+      var
+        settings        = ( $.isPlainObject(parameters) )
+          ? $.extend(true, {}, $.fn.range.settings, parameters)
+          : $.extend({}, $.fn.range.settings),
 
         className       = settings.className,
         metadata        = settings.metadata,
-				namespace       = settings.namespace,
-				start           = settings.start,
-				input           = settings.input,
+        namespace       = settings.namespace,
+        start           = settings.start,
+        input           = settings.input,
         error           = settings.error,
 
-				eventNamespace  = '.' + namespace,
-				moduleNamespace = 'module-' + namespace,
+        eventNamespace  = '.' + namespace,
+        moduleNamespace = 'module-' + namespace,
 
-				$module         = $(this),
+        $module         = $(this),
         $thumb,
         $track,
         $trackFill,
 
-				element         = this,
-				instance        = $module.data(moduleNamespace),
+        element         = this,
+        instance        = $module.data(moduleNamespace),
 
         reversed        = $module.hasClass(settings.className.reversed),
         offset,
-				precision,
+        precision,
         isTouch,
 
-				module
-			;
+        module
+      ;
 
-			module = {
+      module = {
 
-				initialize: function() {
+        initialize: function() {
           module.debug('Initializing range slider', settings);
           isTouch = module.get.isTouch();
           module.setup.layout();
@@ -12502,16 +12502,16 @@ $.fn.range = function(parameters) {
             module.bind.events();
           module.read.metadata();
           module.read.settings();
-					module.instantiate();
-				},
+          module.instantiate();
+        },
 
-				instantiate: function() {
+        instantiate: function() {
           module.verbose('Storing instance of range', module);
-					instance = module;
-					$module
+          instance = module;
+          $module
             .data(moduleNamespace, module)
           ;
-				},
+        },
 
         destroy: function() {
           module.verbose('Destroying previous range for', $module);
@@ -12536,59 +12536,61 @@ $.fn.range = function(parameters) {
         bind: {
           events: function() {
             // event listeners
-  					$module.find('.track, .thumb, .inner').on('mousedown', function(event) {
-  						event.stopImmediatePropagation();
-  						event.preventDefault();
-  						$(this).closest(".range").trigger('mousedown', event);
+            $module.find('.track, .thumb, .inner').on('mousedown' + eventNamespace, function(event) {
+              event.stopImmediatePropagation();
+              event.preventDefault();
+              $(this).closest(".range").trigger('mousedown' + eventNamespace, event);
               module.event.down(event);
-  					});
-  					$module.find('.track, .thumb, .inner').on('touchstart', function(event) {
-  						event.stopImmediatePropagation();
-  						event.preventDefault();
-  						$(this).closest(".range").trigger('touchstart', event);
-              module.event.down(event);
-  					});
-  					$module.on('mousedown' + eventNamespace, module.event.down);
-  					$module.on('touchstart' + eventNamespace, module.event.down);
+            });
+            $module.on('mousedown' + eventNamespace, module.event.down);
+            if(module.get.isTouch()) {
+              $module.find('.track, .thumb, .inner').on('touchstart' + eventNamespace, function(event) {
+                event.stopImmediatePropagation();
+                event.preventDefault();
+                $(this).closest(".range").trigger('touchstart' + eventNamespace, event);
+                module.event.down(event);
+              });
+              $module.on('touchstart' + eventNamespace, module.event.down);
+            }
           },
           documentEvents: function() {
             if(module.get.isTouch()) {
-							$(document).on('touchmove' + eventNamespace, module.event.move);
-							$(document).on('touchend' + eventNamespace, module.event.up);
-						}
-						else {
-							$(document).on('mousemove' + eventNamespace, module.event.move);
-							$(document).on('mouseup' + eventNamespace, module.event.up);
-						}
+              $(document).on('touchmove' + eventNamespace, module.event.move);
+              $(document).on('touchend' + eventNamespace, module.event.up);
+            }
+            else {
+              $(document).on('mousemove' + eventNamespace, module.event.move);
+              $(document).on('mouseup' + eventNamespace, module.event.up);
+            }
           }
         },
 
         unbind: {
           events: function() {
-            $module.find('.track, .thumb, .inner').off('mousedown', function(event) {
-  						event.stopImmediatePropagation();
-  						event.preventDefault();
-  						$(this).closest(".range").trigger('mousedown', event);
+            $module.find('.track, .thumb, .inner').off('mousedown' + eventNamespace, function(event) {
+              event.stopImmediatePropagation();
+              event.preventDefault();
+              $(this).closest(".range").trigger('mousedown' + eventNamespace, event);
               module.event.mousedown(event);
-  					});
-  					$module.find('.track, .thumb, .inner').off('touchstart', function(event) {
-  						event.stopImmediatePropagation();
-  						event.preventDefault();
-  						$(this).closest(".range").trigger('touchstart', event);
+            });
+            $module.find('.track, .thumb, .inner').off('touchstart' + eventNamespace, function(event) {
+              event.stopImmediatePropagation();
+              event.preventDefault();
+              $(this).closest(".range").trigger('touchstart' + eventNamespace, event);
               module.event.touchstart(event);
-  					});
-  					$module.off('mousedown' + eventNamespace, module.event.down);
-  					$module.off('touchstart' + eventNamespace, module.event.down);
+            });
+            $module.off('mousedown' + eventNamespace, module.event.down);
+            $module.off('touchstart' + eventNamespace, module.event.down);
           },
           documentEvents: function() {
             if(module.get.isTouch()) {
-							$(document).off('touchmove' + eventNamespace, module.event.move);
-							$(document).off('touchend' + eventNamespace, module.event.up);
-						}
-						else {
-							$(document).off('mousemove' + eventNamespace, module.event.move);
-							$(document).off('mouseup' + eventNamespace, module.event.up);
-						}
+              $(document).off('touchmove' + eventNamespace, module.event.move);
+              $(document).off('touchend' + eventNamespace, module.event.up);
+            }
+            else {
+              $(document).off('mousemove' + eventNamespace, module.event.move);
+              $(document).off('mouseup' + eventNamespace, module.event.up);
+            }
           },
         },
 
@@ -12658,17 +12660,17 @@ $.fn.range = function(parameters) {
             ;
             if(step != 0) {
               var split = String(step).split('.');
-            	if(split.length == 2) {
-            		decimalPlaces = split[1].length;
-            	} else {
-            		decimalPlaces = 0;
-            	}
+              if(split.length == 2) {
+                decimalPlaces = split[1].length;
+              } else {
+                decimalPlaces = 0;
+              }
             } else {
               decimalPlaces = settings.decimalPlaces;
             }
             var precision = Math.pow(10, decimalPlaces);
             module.debug('Precision determined', precision);
-          	return precision;
+            return precision;
           },
           min: function() {
             return module.min || settings.min;
@@ -12686,22 +12688,22 @@ $.fn.range = function(parameters) {
             return reversed ? module.get.trackStartPos() - pagePos + module.get.trackOffset() : pagePos - module.get.trackOffset() - module.get.trackStartPos();
           },
           value: function(position) {
-          	var
+            var
               startPos = reversed ? module.get.trackEndPos() : module.get.trackStartPos(),
               endPos = reversed ? module.get.trackStartPos() : module.get.trackEndPos(),
               ratio = (position - startPos) / (endPos - startPos),
-          	  range = module.get.max() - module.get.min(),
+              range = module.get.max() - module.get.min(),
               step = module.get.step(),
               value = (ratio * range),
-          	  difference = (step == 0) ? value : Math.round(value / step) * step
+              difference = (step == 0) ? value : Math.round(value / step) * step
             ;
             module.verbose('Determined value based upon position: ' + position + ' as: ' + value);
             if(value != difference) module.verbose('Rounding value to closest step: ' + difference);
-          	// Use precision to avoid ugly Javascript floating point rounding issues
-          	// (like 35 * .01 = 0.35000000000000003)
+            // Use precision to avoid ugly Javascript floating point rounding issues
+            // (like 35 * .01 = 0.35000000000000003)
             difference = Math.round(difference * precision) / precision;
             module.verbose('Cutting ')
-          	return difference - module.get.min();
+            return difference - module.get.min();
           },
           positionFromValue: function(value) {
             var
@@ -12722,12 +12724,12 @@ $.fn.range = function(parameters) {
 
         set: {
           value: function(newValue) {
-  					if(input) {
-  						$(input).val(newValue);
-  					}
-  					settings.onChange.call(element, newValue);
+            if(input) {
+              $(input).val(newValue);
+            }
+            settings.onChange.call(element, newValue);
             module.debug('Setting range value to ' + newValue);
-  				},
+          },
           max: function(value) {
             module.max = value;
           },
@@ -12742,11 +12744,10 @@ $.fn.range = function(parameters) {
               $thumb.css({right: String(value - offset) + 'px'});
             else
               $thumb.css({left: String(value - offset) + 'px'});
-  					$trackFill.css({width: String(value) + 'px'});
+            $trackFill.css({width: String(value) + 'px'});
             module.position = value;
             module.debug('Setting range position to ' + value);
           },
-
           positionBasedValue: function(value) {
             var
               min = module.get.min(),
@@ -12763,8 +12764,7 @@ $.fn.range = function(parameters) {
               module.goto.max();
               module.set.value(max);
             }
-  				},
-
+          },
           valueMoveToValueBasedPosition: function(position) {
             var
               value = module.determine.value(position),
@@ -12781,7 +12781,6 @@ $.fn.range = function(parameters) {
             module.set.value(value);
             module.set.position(pos);
           },
-
           valueBasedPosition: function(position) {
             var
               value = module.determine.value(position),
@@ -12927,6 +12926,7 @@ $.fn.range = function(parameters) {
             module.error.apply(console, arguments);
           }
         },
+
         performance: {
           log: function(message) {
             var
@@ -12978,6 +12978,7 @@ $.fn.range = function(parameters) {
             performance = [];
           }
         },
+
         invoke: function(query, passedArguments, context) {
           var
             object = instance,
@@ -13058,16 +13059,16 @@ $.fn.range = function(parameters) {
 
 $.fn.range.settings = {
 
-  silent      : false,
-  debug       : false,
-  verbose     : false,
-  performance : true,
+  silent       : false,
+  debug        : false,
+  verbose      : false,
+  performance  : true,
 
   name         : 'Range',
   namespace    : 'range',
 
   error    : {
-    method     : 'The method you called is not defined.',
+    method : 'The method you called is not defined.',
   },
 
   metadata: {
@@ -13077,11 +13078,11 @@ $.fn.range.settings = {
     step  : 'step'
   },
 
-	min            : 0,
-	max            : 20,
-	step           : 1,
-	start          : 0,
-	input          : false,
+  min          : 0,
+  max          : 20,
+  step         : 1,
+  start        : 0,
+  input        : false,
 
   //the decimal place to round to if step is undefined
   decimalPlaces  : 2,
@@ -13091,7 +13092,7 @@ $.fn.range.settings = {
     disabled : 'disabled'
   },
 
-	onChange     : function(value){},
+  onChange : function(value){},
 
 };
 

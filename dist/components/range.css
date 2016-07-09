@@ -100,7 +100,7 @@
   -webkit-transition: opacity 0.2s linear;
   transition: opacity 0.2s linear;
 }
-.ui.hover.range .inner:hover .thumb {
+.ui.hover.range:hover .inner .thumb {
   opacity: 1;
 }
 
@@ -351,7 +351,7 @@
   background-color: #545454;
 }
 .ui.inverted.range.basic .inner .thumb:hover {
-  background-color: #000000;
+  background-color: #474747;
 }
 
 /* Red */
@@ -455,7 +455,7 @@
   background-color: #545454;
 }
 .ui.black.inverted.range.basic .inner .thumb:hover {
-  background-color: #000000;
+  background-color: #474747;
 }
 
 /*--------------
