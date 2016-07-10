@@ -7,10 +7,12 @@
 .ui.range {
   width: 100%;
   padding: 1em 0.5em;
+  position: relative;
 }
 .ui.range .inner {
   height: 1.5em;
   position: relative;
+  z-index: 2;
 }
 .ui.range .inner:hover {
   cursor: auto;
@@ -84,12 +86,48 @@
   left: auto;
   right: 0;
 }
+.ui.labeled.range.reversed > .labels .label {
+  -webkit-transform: translate(-100%, -100%);
+          transform: translate(-100%, -100%);
+}
 
 
 /*******************************
            Variations
 *******************************/
 
+
+/*--------------
+    Labeled
+---------------*/
+
+.ui.labeled.range > .labels {
+  height: 1.5em;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+}
+.ui.labeled.range > .labels .label {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  position: absolute;
+  -webkit-transform: translate(-50%, -100%);
+          transform: translate(-50%, -100%);
+}
+.ui.labeled.range > .labels .label:after {
+  content: ' ';
+  height: 1.5em;
+  width: 1px;
+  background: #ccc;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+}
 
 /*--------------
     Hover
@@ -468,10 +506,17 @@
   height: 1em;
   width: 1em;
 }
+.ui.range.small .inner {
+  height: 1em;
+}
 .ui.range.small .inner .track,
 .ui.range.small .inner .track-fill {
   height: 0.3em;
   top: 0.35em;
+}
+.ui.small.labeled.range > .labels,
+.ui.small.labeled.range > .labels .label:after {
+  height: 1em;
 }
 
 /* Large */
@@ -479,10 +524,17 @@
   height: 2em;
   width: 2em;
 }
+.ui.range.large .inner {
+  height: 2em;
+}
 .ui.range.large .inner .track,
 .ui.range.large .inner .track-fill {
   height: 0.5em;
   top: 0.75em;
+}
+.ui.large.labeled.range > .labels,
+.ui.large.labeled.range > .labels .label:after {
+  height: 2em;
 }
 
 /* Big */
@@ -490,10 +542,17 @@
   height: 2.5em;
   width: 2.5em;
 }
+.ui.range.big .inner {
+  height: 2.5em;
+}
 .ui.range.big .inner .track,
 .ui.range.big .inner .track-fill {
   height: 0.6em;
   top: 0.95em;
+}
+.ui.big.labeled.range > .labels,
+.ui.big.labeled.range > .labels .label:after {
+  height: 2.5em;
 }
 
 
