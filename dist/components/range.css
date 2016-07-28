@@ -11,6 +11,9 @@
 .ui.range {
   position: relative;
 }
+.ui.range:focus {
+  outline: 0;
+}
 .ui.range .inner {
   position: relative;
   z-index: 2;
