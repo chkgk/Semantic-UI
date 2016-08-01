@@ -155,8 +155,16 @@ $.fn.range = function(parameters) {
               position
             ;
             $children.each(function(index) {
-              ratio = ((index+1)/(numChildren+1));
-              position = module.determine.positionFromRatio(ratio);
+              var
+                $child = $(this),
+                attrValue = $child.attr('data-value')
+              ;
+              if(attrValue) {
+                position = module.determine.positionFromValue(attrValue)
+              } else {
+                ratio = ((index+1)/(numChildren+1));
+                position = module.determine.positionFromRatio(ratio);
+              }
               var posDir =
                 module.is.vertical()
                 ?
@@ -287,7 +295,10 @@ $.fn.range = function(parameters) {
               newPos = module.determine.pos(eventPos)
             ;
             if (eventPos >= module.get.trackOffset() && eventPos <= module.get.trackOffset() + module.get.trackLength()) {
-              module.set.position(newPos);
+              if(module.get.step() == 0 || settings.smooth)
+                module.set.position(newPos);
+              else
+                module.update.value(module.determine.value(newPos));
             }
           },
           up: function(event, originalEvent) {
@@ -539,6 +550,7 @@ $.fn.range = function(parameters) {
             var
               min = module.get.min(),
               max = module.get.max(),
+              value = value > max ? max : value < min ? min : value,
               trackLength = module.get.trackLength(),
               ratio = (value - min) / (max - min),
               position = Math.round(ratio * trackLength)
@@ -992,6 +1004,7 @@ $.fn.range.settings = {
   start        : 0,
   doubleStart  : 1,
   labelType    : 'number',
+  smooth       : false,
 
   //the decimal place to round to if step is undefined
   decimalPlaces  : 2,
@@ -1023,7 +1036,6 @@ $.fn.range.settings = {
   },
 
   onChange : function(value){},
-
 };
 
 
