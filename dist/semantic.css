@@ -32583,13 +32583,13 @@ a.ui.nag {
   transition: background 0.3s ease;
 }
 
-.ui.range .inner .thumb:hover {
+.ui.range:not(.disabled) .inner .thumb:hover {
   pointer: pointer;
   background: #f2f2f2 -webkit-linear-gradient(transparent, rgba(0, 0, 0, 0.05));
   background: #f2f2f2 linear-gradient(transparent, rgba(0, 0, 0, 0.05));
 }
 
-.ui.range:focus .inner .thumb {
+.ui.range:not(.disabled):focus .inner .thumb {
   background: #f2f2f2 -webkit-linear-gradient(transparent, rgba(0, 0, 0, 0.05));
   background: #f2f2f2 linear-gradient(transparent, rgba(0, 0, 0, 0.05));
 }
@@ -32747,8 +32747,8 @@ a.ui.nag {
   transition: opacity 0.2s linear;
 }
 
-.ui.hover.range:hover .inner .thumb,
-.ui.hover.range:focus .inner .thumb {
+.ui.hover.range:not(.disabled):hover .inner .thumb,
+.ui.hover.range:not(.disabled):focus .inner .thumb {
   opacity: 1;
 }
 
