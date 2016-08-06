@@ -12576,6 +12576,9 @@ $.fn.range = function(parameters) {
             $track = $module.find('.track');
             $trackFill = $module.find('.track-fill');
             offset = $thumb.width()/2;
+            module.setup.labels();
+          },
+          labels: function() {
             if(module.is.labeled()) {
               $labels = $module.find('.labels:not(.auto)');
               if($labels.length != 0) {
@@ -12810,6 +12813,7 @@ $.fn.range = function(parameters) {
             module.update.position(module.determine.positionFromValue(module.secondThumbVal), $secondThumb);
           }
           module.update.position(module.determine.positionFromValue(module.thumbVal), $thumb);
+          module.setup.labels();
         },
         takeStep: function(multiplier) {
           var
