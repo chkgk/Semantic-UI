@@ -12558,6 +12558,14 @@ $.fn.range = function(parameters) {
           },
         },
 
+        disconnect: {
+          sliderObserver: function() {
+            if(sliderObserver) {
+              sliderObserver.disconnect();
+            }
+          }
+        },
+
         setup: {
           layout: function() {
             if( $module.attr('tabindex') === undefined) {
