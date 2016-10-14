@@ -3,7 +3,6 @@
  * http://github.com/semantic-org/semantic-ui/
  *
  *
- * Copyright 2015 Contributors
  * Released under the MIT license
  * http://opensource.org/licenses/MIT
  *
@@ -88,6 +87,7 @@
 .ui.form input[type="tel"],
 .ui.form input[type="time"],
 .ui.form input[type="text"],
+.ui.form input[type="file"],
 .ui.form input[type="url"] {
   width: @inputWidth;
   vertical-align: top;
@@ -109,6 +109,7 @@
 .ui.form input[type="tel"],
 .ui.form input[type="time"],
 .ui.form input[type="text"],
+.ui.form input[type="file"],
 .ui.form input[type="url"] {
   font-family: @inputFont;
   margin: 0em;
@@ -374,6 +375,7 @@
 .ui.form input[type="tel"]:focus,
 .ui.form input[type="time"]:focus,
 .ui.form input[type="text"]:focus,
+.ui.form input[type="file"]:focus,
 .ui.form input[type="url"]:focus {
   color: @inputFocusColor;
   border-color: @inputFocusBorderColor;
@@ -399,6 +401,9 @@
 .ui.form.success .success.message:not(:empty) {
   display: block;
 }
+.ui.form.success .compact.success.message:not(:empty) {
+  display: inline-block;
+}
 .ui.form.success .icon.success.message:not(:empty) {
   display: flex;
 }
@@ -411,6 +416,9 @@
 .ui.form.warning .warning.message:not(:empty) {
   display: block;
 }
+.ui.form.warning .compact.warning.message:not(:empty) {
+  display: inline-block;
+}
 .ui.form.warning .icon.warning.message:not(:empty) {
   display: flex;
 }
@@ -422,6 +430,9 @@
 /* On Form */
 .ui.form.error .error.message:not(:empty) {
   display: block;
+}
+.ui.form.error .compact.error.message:not(:empty) {
+  display: inline-block;
 }
 .ui.form.error .icon.error.message:not(:empty) {
   display: flex;
@@ -453,6 +464,7 @@
 .ui.form .fields.error .field input[type="tel"],
 .ui.form .fields.error .field input[type="time"],
 .ui.form .fields.error .field input[type="text"],
+.ui.form .fields.error .field input[type="file"],
 .ui.form .fields.error .field input[type="url"],
 .ui.form .field.error textarea,
 .ui.form .field.error select,
@@ -466,6 +478,7 @@
 .ui.form .field.error input[type="tel"],
 .ui.form .field.error input[type="time"],
 .ui.form .field.error input[type="text"],
+.ui.form .field.error input[type="file"],
 .ui.form .field.error input[type="url"] {
   background: @formErrorBackground;
   border-color: @formErrorBorder;
@@ -485,6 +498,7 @@
 .ui.form .field.error input[type="tel"]:focus,
 .ui.form .field.error input[type="time"]:focus,
 .ui.form .field.error input[type="text"]:focus,
+.ui.form .field.error input[type="file"]:focus,
 .ui.form .field.error input[type="url"]:focus {
   background: @inputErrorFocusBackground;
   border-color: @inputErrorFocusBorder;
@@ -582,7 +596,8 @@
   pointer-events: none;
   opacity: @disabledOpacity;
 }
-.ui.form .field.disabled label {
+.ui.form .field.disabled > label,
+.ui.form .fields.disabled > label {
   opacity: @disabledLabelOpacity;
 }
 .ui.form .field.disabled :disabled {
@@ -597,7 +612,7 @@
 .ui.loading.form {
   position: relative;
   cursor: default;
-  point-events: none;
+  pointer-events: none;
 }
 .ui.loading.form:before {
   position: absolute;
@@ -710,6 +725,7 @@
 .ui.inverted.form input[type="tel"],
 .ui.inverted.form input[type="time"],
 .ui.inverted.form input[type="text"],
+.ui.inverted.form input[type="file"],
 .ui.inverted.form input[type="url"] {
   background: @invertedInputBackground;
   border-color: @invertedInputBorderColor;

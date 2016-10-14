@@ -1,9 +1,8 @@
 /*!
- * # Semantic UI 2.2.0 - Progress
+ * # Semantic UI 2.2.4 - Progress
  * http://github.com/semantic-org/semantic-ui/
  *
  *
- * Copyright 2015 Contributors
  * Released under the MIT license
  * http://opensource.org/licenses/MIT
  *
@@ -453,7 +452,7 @@ $.fn.progress = function(parameters) {
             $bar.one(transitionEnd + eventNamespace, animationCallback);
             animating = true;
             module.interval = setInterval(function() {
-              let
+              var
                 isInDOM = $.contains(document.documentElement, element)
               ;
               if(!isInDOM) {
