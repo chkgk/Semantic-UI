@@ -1,9 +1,8 @@
 /*!
- * # Semantic UI 2.2.0 - Shape
+ * # Semantic UI 2.2.4 - Shape
  * http://github.com/semantic-org/semantic-ui/
  *
  *
- * Copyright 2015 Contributors
  * Released under the MIT license
  * http://opensource.org/licenses/MIT
  *
@@ -68,11 +67,6 @@ $.fn.shape = function(parameters) {
         nextIndex = false,
         $activeSide,
         $nextSide,
-
-        initial = {
-          width  : $module.width(),
-          height : $module.height()
-        },
 
         // standard module
         element       = this,
@@ -255,36 +249,29 @@ $.fn.shape = function(parameters) {
                 : ( $activeSide.next(selector.side).length > 0 )
                   ? $activeSide.next(selector.side)
                   : $clone.find(selector.side).first(),
-              newSize = {}
+              newWidth    = (settings.width == 'next')
+                ? $nextSide.outerWidth(true)
+                : (settings.width == 'initial')
+                  ? $module.width()
+                  : settings.width,
+              newHeight    = (settings.height == 'next')
+                ? $nextSide.outerHeight(true)
+                : (settings.height == 'initial')
+                  ? $module.height()
+                  : settings.height
             ;
             $activeSide.removeClass(className.active);
             $nextSide.addClass(className.active);
             $clone.insertAfter($module);
-            if(settings.width == 'next') {
-              newSize.width = $nextSide.outerWidth(true);
-            }
-            else if(settings.width == 'initial') {
-              newSize.width = initial.width;
-            }
-            else {
-              newSize.width = settings.width;
-            }
-            if(settings.height == 'next') {
-              newSize.height = $nextSide.outerHeight(true);
-            }
-            else if(settings.height == 'initial') {
-              newSize.height = initial.height + 2;
-            }
-            else {
-              newSize.height = settings.height;
-            }
-            newSize.width  += settings.jitter;
-            newSize.height += settings.jitter;
             $clone.remove();
-            $module
-              .css(newSize)
-            ;
-            module.verbose('Resizing stage to fit new content', newSize);
+            if(settings.width != 'auto') {
+              $module.css('width', newWidth + settings.jitter);
+              module.verbose('Specifying width during animation', newWidth);
+            }
+            if(settings.height != 'auto') {
+              $module.css('height', newHeight + settings.jitter);
+              module.verbose('Specifying height during animation', newHeight);
+            }
           },
 
           nextSide: function(selector) {
@@ -320,9 +307,12 @@ $.fn.shape = function(parameters) {
             }
             if( !module.is.animating()) {
               module.debug('Flipping up', $nextSide);
+              var
+                transform = module.get.transform.up()
+              ;
               module.set.stageSize();
               module.stage.above();
-              module.animate( module.get.transform.up() );
+              module.animate(transform);
             }
             else {
               module.queue('flip up');
@@ -336,9 +326,12 @@ $.fn.shape = function(parameters) {
             }
             if( !module.is.animating()) {
               module.debug('Flipping down', $nextSide);
+              var
+                transform = module.get.transform.down()
+              ;
               module.set.stageSize();
               module.stage.below();
-              module.animate( module.get.transform.down() );
+              module.animate(transform);
             }
             else {
               module.queue('flip down');
@@ -352,9 +345,12 @@ $.fn.shape = function(parameters) {
             }
             if( !module.is.animating()) {
               module.debug('Flipping left', $nextSide);
+              var
+                transform = module.get.transform.left()
+              ;
               module.set.stageSize();
               module.stage.left();
-              module.animate(module.get.transform.left() );
+              module.animate(transform);
             }
             else {
               module.queue('flip left');
@@ -368,9 +364,12 @@ $.fn.shape = function(parameters) {
             }
             if( !module.is.animating()) {
               module.debug('Flipping right', $nextSide);
+              var
+                transform = module.get.transform.right()
+              ;
               module.set.stageSize();
               module.stage.right();
-              module.animate(module.get.transform.right() );
+              module.animate(transform);
             }
             else {
               module.queue('flip right');
@@ -871,14 +870,20 @@ $.fn.shape.settings = {
   // verbose debug output
   verbose    : false,
 
-  // fudge factor in pixels when swapping from 2d to 3d
-  jitter     : 1,
+  // fudge factor in pixels when swapping from 2d to 3d (can be useful to correct rounding errors)
+  jitter     : 0,
 
   // performance data output
   performance: true,
 
   // event namespace
   namespace  : 'shape',
+
+  // width during animation, can be set to 'auto', initial', 'next' or pixel amount
+  width: 'initial',
+
+  // height during animation, can be set to 'auto', 'initial', 'next' or pixel amount
+  height: 'initial',
 
   // callback occurs on side change
   beforeChange : function() {},

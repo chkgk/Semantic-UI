@@ -3,7 +3,6 @@
  * http://github.com/semantic-org/semantic-ui/
  *
  *
- * Copyright 2015 Contributors
  * Released under the MIT license
  * http://opensource.org/licenses/MIT
  *
@@ -155,8 +154,8 @@ $.fn.dropdown = function(parameters) {
             }
           },
           selectObserver: function() {
-            if(menuObserver) {
-              menuObserver.disconnect();
+            if(selectObserver) {
+              selectObserver.disconnect();
             }
           }
         },
@@ -875,7 +874,7 @@ $.fn.dropdown = function(parameters) {
             $selectedItem      = ($currentlySelected.length > 0)
               ? $currentlySelected
               : $activeItem,
-            hasSelected = ($selectedItem.size() > 0)
+            hasSelected = ($selectedItem.length > 0)
           ;
           if(hasSelected) {
             module.debug('Forcing partial selection to selected item', $selectedItem);
@@ -959,7 +958,7 @@ $.fn.dropdown = function(parameters) {
               pageLostFocus = (document.activeElement === this);
               if(!willRefocus) {
                 if(!itemActivated && !pageLostFocus) {
-                  if(settings.forceSelection && module.has.query()) {
+                  if(settings.forceSelection) {
                     module.forceSelection();
                   }
                   module.hide();
@@ -971,7 +970,6 @@ $.fn.dropdown = function(parameters) {
           icon: {
             click: function(event) {
               module.toggle();
-              event.stopPropagation();
             }
           },
           text: {
@@ -1035,7 +1033,7 @@ $.fn.dropdown = function(parameters) {
                   ? module.show
                   : module.toggle
               ;
-              if(module.is.bubbledLabelClick(event)) {
+              if(module.is.bubbledLabelClick(event) || module.is.bubbledIconClick(event)) {
                 return;
               }
               if( module.determine.eventOnElement(event, toggleBehavior) ) {
@@ -1288,7 +1286,7 @@ $.fn.dropdown = function(parameters) {
                   ? $currentlySelected
                   : $activeItem,
                 $visibleItems = ($selectedItem.length > 0)
-                  ? $selectedItem.siblings(':not(.' + className.filtered +')').andSelf()
+                  ? $selectedItem.siblings(':not(.' + className.filtered +')').addBack()
                   : $menu.children(':not(.' + className.filtered +')'),
                 $subMenu              = $selectedItem.children(selector.menu),
                 $parentMenu           = $selectedItem.closest(selector.menu),
@@ -1302,7 +1300,6 @@ $.fn.dropdown = function(parameters) {
                 isSubMenuItem,
                 newIndex
               ;
-
               // allow selection with menu closed
               if(isAdditionWithoutMenu) {
                 module.verbose('Selecting item from keyboard shortcut', $selectedItem);
@@ -1417,8 +1414,7 @@ $.fn.dropdown = function(parameters) {
                     ;
                     module.set.scrollPosition($nextItem);
                     if(settings.selectOnKeydown && module.is.single()) {
-                      module.set.activeItem($nextItem);
-                      module.set.selected(module.get.choiceValue($nextItem), $nextItem);
+                      module.set.selectedItem($nextItem);
                     }
                   }
                   event.preventDefault();
@@ -1456,7 +1452,7 @@ $.fn.dropdown = function(parameters) {
               }
             }
             else {
-              if( !module.is.search() ) {
+              if( !module.has.search() ) {
                 module.set.selectedLetter( String.fromCharCode(pressedKey) );
               }
             }
@@ -1557,8 +1553,19 @@ $.fn.dropdown = function(parameters) {
           },
 
           select: function(text, value, element) {
-            // mimics action.activate but does not select text
-            module.action.activate.call(element);
+            value = (value !== undefined)
+              ? value
+              : text
+            ;
+            if( module.can.activate( $(element) ) ) {
+              module.set.value(value, $(element));
+              if(module.is.multiple() && !module.is.allFiltered()) {
+                return;
+              }
+              else {
+                module.hideAndClear();
+              }
+            }
           },
 
           combo: function(text, value, element) {
@@ -2074,7 +2081,7 @@ $.fn.dropdown = function(parameters) {
         },
 
         clear: function() {
-          if(module.is.multiple()) {
+          if(module.is.multiple() && settings.useLabels) {
             module.remove.labels();
           }
           else {
@@ -2210,6 +2217,12 @@ $.fn.dropdown = function(parameters) {
               $item.addClass(className.active);
             }
           },
+          partialSearch: function(text) {
+            var
+              length = module.get.query().length
+            ;
+            $search.val( text.substr(0 , length));
+          },
           scrollPosition: function($item, forceScroll) {
             var
               edgeTolerance = 5,
@@ -2281,10 +2294,16 @@ $.fn.dropdown = function(parameters) {
             }
           },
           selectedItem: function($item) {
+            var
+              value = module.get.choiceValue($item),
+              text  = module.get.choiceText($item, false)
+            ;
             module.debug('Setting user selection to item', $item);
             module.remove.activeItem();
+            module.set.partialSearch(text);
             module.set.activeItem($item);
-            module.set.selected(module.get.choiceValue($item), $item);
+            module.set.selected(value, $item);
+            module.set.text(text);
           },
           selectedLetter: function(letter) {
             var
@@ -2576,6 +2595,8 @@ $.fn.dropdown = function(parameters) {
             }
             if(hasUserSuggestion) {
               $addition
+                .data(metadata.value, value)
+                .data(metadata.text, value)
                 .attr('data-' + metadata.value, value)
                 .attr('data-' + metadata.text, value)
                 .removeClass(className.filtered)
@@ -2602,6 +2623,7 @@ $.fn.dropdown = function(parameters) {
                 .removeClass(className.selected)
               ;
             }
+            module.refreshItems();
           },
           variables: function(message, term) {
             var
@@ -2952,6 +2974,9 @@ $.fn.dropdown = function(parameters) {
             ;
             return ($normalResults.filter(selector.unselectable).length === $normalResults.length);
           },
+          userSuggestion: function() {
+            return ($menu.children(selector.addition).length > 0);
+          },
           query: function() {
             return (module.get.query() !== '');
           },
@@ -2976,6 +3001,9 @@ $.fn.dropdown = function(parameters) {
           bubbledLabelClick: function(event) {
             return $(event.target).is('select, input') && $module.closest('label').length > 0;
           },
+          bubbledIconClick: function(event) {
+            return $(event.target).closest($icon).length > 0;
+          },
           alreadySetup: function() {
             return ($module.is('select') && $module.parent(selector.dropdown).length > 0  && $module.prev().length === 0);
           },
@@ -2995,7 +3023,7 @@ $.fn.dropdown = function(parameters) {
             return (document.activeElement === $search[0]);
           },
           allFiltered: function() {
-            return( (module.is.multiple() || module.has.search()) && !module.has.message() && module.has.allResultsFiltered() );
+            return( (module.is.multiple() || module.has.search()) && !(settings.hideAdditions == false && module.has.userSuggestion()) && !module.has.message() && module.has.allResultsFiltered() );
           },
           hidden: function($subMenu) {
             return !module.is.visible($subMenu);
@@ -3492,7 +3520,7 @@ $.fn.dropdown.settings = {
   forceSelection         : true,       // force a choice on blur with search selection
 
   allowAdditions         : false,      // whether multiple select should allow user added values
-  hideAdditions          : false,       // whether or not to hide special message prompting a user they can enter a value
+  hideAdditions          : true,      // whether or not to hide special message prompting a user they can enter a value
 
   maxSelections          : false,      // When set to a number limits the number of selections to this count
   useLabels              : true,       // whether multiple select should filter currently active selections from choices

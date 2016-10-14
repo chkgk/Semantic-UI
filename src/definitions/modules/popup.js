@@ -3,7 +3,6 @@
  * http://github.com/semantic-org/semantic-ui/
  *
  *
- * Copyright 2015 Contributors
  * Released under the MIT license
  * http://opensource.org/licenses/MIT
  *
@@ -89,7 +88,9 @@ $.fn.popup = function(parameters) {
           if(!module.exists() && settings.preserve) {
             module.create();
           }
-          module.observeChanges();
+          if(settings.observeChanges) {
+            module.observeChanges();
+          }
           module.instantiate();
         },
 
@@ -506,7 +507,9 @@ $.fn.popup = function(parameters) {
               targetPosition   = (settings.inline || (settings.popup && settings.movePopup))
                 ? $target.position()
                 : $target.offset(),
-              screenPosition = $boundary.offset() || { top: 0, left: 0 },
+              screenPosition = (isWindow)
+                ? { top: 0, left: 0 }
+                : $boundary.offset(),
               calculations   = {},
               scroll = (isWindow)
                 ? { top: $window.scrollTop(), left: $window.scrollLeft() }
